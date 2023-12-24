@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "iostream": "cpp",
+        "thread": "cpp",
+        "threadpool.h": "c",
+        "stdlib.h": "c",
+        "string.h": "c"
+    }
+}
