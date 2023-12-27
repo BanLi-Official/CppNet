@@ -1,7 +1,8 @@
 {
     "configurations": [
+        
         {
-            "name": "C/C++: gcc.exe build and debug active file",
+            "name": "C/C++: gcc.exe build and debug active file god",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
@@ -24,8 +25,35 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: gcc.exe build active file"
+            "preLaunchTask": "C/C++: g++.exe build active file god"
+        },
+        {
+            "name": "C/C++: gcc.exe build and debug active file shiyanshi",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole":true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "D:\\SoftWare\\MinGW\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: g++.exe build active file shiyanshi"
         }
+       
     ],
     "version": "2.0.0"
 }
