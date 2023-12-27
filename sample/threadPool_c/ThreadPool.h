@@ -9,6 +9,7 @@ ThreadPool *threadPoolCreate(int min, int max, int queueSize);
 // 销毁线程池
 int threadPoolDestroy(ThreadPool* pool);
 
+
 // 给线程池添加任务
 void threadPoolAdd(ThreadPool* pool, void(*func)(void*), void* arg);
 
@@ -17,6 +18,7 @@ int threadPoolBusyNum(ThreadPool* pool);
 
 // 获取线程池中活着的线程的个数
 int threadPoolAliveNum(ThreadPool* pool);
+
 
 //////////////////////
 // 工作的线程(消费者线程)任务函数

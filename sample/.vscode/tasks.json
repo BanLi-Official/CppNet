@@ -32,7 +32,9 @@
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "-lws2_32",
                 "-pthread",
+                "-lpthread",
                 "-std=c++11",
+                "ThreadPool.c",
                 "-lstdc++"
             ],
             "options": {

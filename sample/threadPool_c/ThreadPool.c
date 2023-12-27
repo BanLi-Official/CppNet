@@ -7,6 +7,8 @@
 
 #define NUMBER 2
 
+int num=0;
+
 // 任务结构体
 typedef struct Task
 {
@@ -102,6 +104,87 @@ ThreadPool* threadPoolCreate(int min,int max,int queueSize)
     return NULL;
 }
 
+int threadPoolDestroy(ThreadPool *pool)
+{
+    if(pool ==NULL)
+    {
+        return -1;
+    }
+
+    //关闭线程池
+    pool->shutdown=1;
+    //阻塞回收管理者线程
+    pthread_join(pool->managerID,NULL);
+    //唤醒阻塞的消费者线程
+    for(int i=0;i<pool->liveNum;i++)
+    {
+        pthread_cond_signal(&pool->notEmpty);
+    }
+    //释放内存
+    if(pool->taskQ)
+    {
+        free(pool->taskQ);
+    }
+    if(pool->threadIDs)
+    {
+        free(pool->threadIDs);
+    }
+    //销毁同步资源
+    pthread_mutex_destroy(&pool->mutexBusy);
+    pthread_mutex_destroy(&pool->mutexPool);
+    pthread_cond_destroy(&pool->notEmpty);
+    pthread_cond_destroy(&pool->notFull);
+
+    free(pool);
+    pool=NULL;
+    return 0;
+}
+
+void threadPoolAdd(ThreadPool *pool, void (*func)(void *), void *arg)
+{
+    Task task;
+    task.function=func;
+    task.arg=arg;
+
+    pthread_mutex_lock(&pool->mutexPool);
+    while(pool->queueSize == pool->queueCapacity && !pool->shutdown)
+    {
+        pthread_cond_wait(&pool->notFull,&pool->mutexPool);
+    }
+    if (pool->shutdown)
+    {
+        pthread_mutex_unlock(&pool->mutexPool);
+        return;
+    }
+
+    //添加任务
+    pool->taskQ[pool->queueRear]=task;
+    pool->queueRear=(pool->queueRear+1)%pool->queueCapacity;
+    pool->queueSize++;
+
+    pthread_cond_signal(&pool->notEmpty);
+    
+    pthread_mutex_unlock(&pool->mutexPool);
+}
+
+int threadPoolBusyNum(ThreadPool * pool)
+{
+    pthread_mutex_lock(&pool->mutexPool);
+    int busyNum=pool->busyNum;
+    pthread_mutex_unlock(&pool->mutexPool);
+    
+    return busyNum;
+}
+
+int threadPoolAliveNum(ThreadPool *pool)
+{
+    pthread_mutex_lock(&pool->mutexPool);
+    int aliveNum=pool->liveNum;
+    pthread_mutex_unlock(&pool->mutexPool);
+
+    return aliveNum;
+}
+
 void* manager(void* arg)
 {
     //变量初始化
@@ -129,7 +212,9 @@ void* manager(void* arg)
             {
                 if(pool->threadIDs[i]==0)
                 {
+
                     pthread_create(&pool->threadIDs[i],NULL,worker,pool);
+                    printf("thread %ld be creadted@@@@@@@@@\n",num++);
                     pool->liveNum++;
                     count++;
                 }
@@ -156,10 +241,6 @@ void* manager(void* arg)
     return NULL;
 }
 
-
-
-
-
 void threadExit(ThreadPool *pool)
 {
     pthread_t pid=pthread_self();
@@ -168,13 +249,12 @@ void threadExit(ThreadPool *pool)
         if(pool->threadIDs[i]==pid)
         {
             pool->threadIDs[i]=0;
-            printf("thread %ld Exits",pid);
+            printf("thread %ld Exits\n",pid);
             break;
         }
     }
     pthread_exit(NULL);
 }
-
 
 void *worker(void *arg)
 {
@@ -223,14 +303,14 @@ void *worker(void *arg)
         pthread_cond_signal(&pool->notFull);
         pthread_mutex_unlock(&pool->mutexPool);
 
-        printf("thread %ld start working.....",pthread_self());
+        printf("thread %ld start working.....\n",pthread_self());
         pthread_mutex_lock(&pool->mutexBusy);
         pool->busyNum++;
         pthread_mutex_unlock(&pool->mutexBusy);
         task.function(task.arg);
         free(task.arg);
         task.arg=NULL;
-        printf("thread %ld end working.......",pthread_self());
+        printf("thread %ld end working.......\n",pthread_self());
         pthread_mutex_lock(&pool->mutexBusy);
         pool->busyNum--;
         pthread_mutex_unlock(&pool->mutexBusy);
@@ -243,8 +323,3 @@ void *worker(void *arg)
 
 
 
-int main()
-{
-    printf("hello world!");
-    return 0;
-}
