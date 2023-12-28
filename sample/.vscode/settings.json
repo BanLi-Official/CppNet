@@ -4,6 +4,7 @@
         "thread": "cpp",
         "threadpool.h": "c",
         "stdlib.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "pthread.h": "c"
     }
 }
