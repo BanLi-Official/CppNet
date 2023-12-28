@@ -3,11 +3,7 @@
 
 using namespace std;
 
-int main()
-{
-    cout<<"hello world!";
-    return 0;
-}
+
 
 taskQ::taskQ()
 {
@@ -20,19 +16,25 @@ taskQ::~taskQ()
     pthread_mutex_destroy(&this->m_mutex);
 }
 
-void taskQ::inputTask(task a)
+void taskQ::inputTask(Task a)
 {
+    pthread_mutex_lock(&m_mutex);
     this->taskQueue.push(a);
+    pthread_mutex_unlock(&m_mutex);
 }
 
 void taskQ::inputTask(callback f, void *arg)
 {
-    this->taskQueue.push(task(f,arg));
+    pthread_mutex_lock(&m_mutex);
+    this->taskQueue.push(Task(f,arg));
+    pthread_mutex_unlock(&m_mutex);
 }
 
-task taskQ::getTask()
+Task taskQ::getTask()
 {
-    task res=this->taskQueue.front();//取最前面第一个任务
+    pthread_mutex_lock(&m_mutex);
+    Task res=this->taskQueue.front();//取最前面第一个任务
     this->taskQueue.pop();//弹出第一个任务
-    return task();
+    pthread_mutex_unlock(&m_mutex);
+    return res;
 }

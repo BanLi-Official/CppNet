@@ -6,15 +6,15 @@
 
 using callback =void(*)(void*);
 using namespace std;
-struct task
+struct Task
 {
-    task()
+    Task()
     {
         function=nullptr;
         arg=nullptr;
     }
 
-    task(callback f,void *arg)
+    Task(callback f,void *arg)
     {
         function=f;
         this->arg=arg;
@@ -35,11 +35,11 @@ public:
     ~taskQ();
 
     //放入任务
-    void inputTask(task a);
+    void inputTask(Task a);
     void inputTask(callback f,void *arg);
 
     //取出任务
-    task getTask();
+    Task getTask();
 
     //获取任务数量
     inline int getTaskNum()
@@ -50,6 +50,6 @@ public:
 private:
     pthread_mutex_t m_mutex;
     
-    queue<task> taskQueue;
+    queue<Task> taskQueue;
     
 };
