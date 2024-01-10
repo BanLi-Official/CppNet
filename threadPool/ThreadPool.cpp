@@ -3,7 +3,7 @@
 #include <string.h>
 #include <string>
 #include <unistd.h>
-
+#include <pthread.h>
 
 
 using namespace std;
@@ -12,44 +12,44 @@ ThreadPool::ThreadPool(int min, int max)
 {
 
 
-    //å®ä¾‹åŒ–ä»»åŠ¡é˜Ÿåˆ—
+    //ÊµÀı»¯ÈÎÎñ¶ÓÁĞ
     task=new taskQ;
     do
     {
-        //åˆå§‹åŒ–çº¿ç¨‹æ± 
+        //³õÊ¼»¯Ïß³Ì³Ø
         this->m_minNum=min;
         this->m_maxNum=max;
         busy_Num=0;
         live_Num=min;
 
-        //æ ¹æ®æœ€å¤§çš„çº¿ç¨‹ä¸Šé™ç»™çº¿ç¨‹æ•°ç»„åˆ†é…å†…å­˜
+        //¸ù¾İ×î´óµÄÏß³ÌÉÏÏŞ¸øÏß³ÌÊı×é·ÖÅäÄÚ´æ
         threadIds=new pthread_t[m_maxNum];
         if(threadIds==nullptr)
         {
-            cout<<"çº¿ç¨‹åˆå§‹åŒ–å¤±è´¥"<<endl;
+            cout<<"Ïß³Ì³õÊ¼»¯Ê§°Ü"<<endl;
             break;
         }
-        //åˆå§‹åŒ–
+        //³õÊ¼»¯
         memset(threadIds,0,sizeof(pthread_t)*m_maxNum);
-        //åˆå§‹åŒ–äº’æ–¥é”ï¼Œæ¡ä»¶å˜é‡ã€‚ç”¨äºäº’æ–¥ä¸åŒæ­¥
+        //³õÊ¼»¯»¥³âËø£¬Ìõ¼ş±äÁ¿¡£ÓÃÓÚ»¥³âÓëÍ¬²½
         if(pthread_mutex_init(&this->mutexPool,NULL)!=0||
             pthread_cond_init(&this->notEmpty,NULL)!=0)
         {
-            cout<<"äº’æ–¥é”å’Œæ¡ä»¶å˜é‡åˆå§‹åŒ–å¤±è´¥"<<endl;
+            cout<<"»¥³âËøºÍÌõ¼ş±äÁ¿³õÊ¼»¯Ê§°Ü"<<endl;
             break;
         }
 
-        //åˆ›å»ºçº¿ç¨‹
-        //æ ¹æ®æœ€å°çš„çº¿ç¨‹ä¸ªæ•°åˆ›å»ºå·¥ä½œçº¿ç¨‹
+        //´´½¨Ïß³Ì
+        //¸ù¾İ×îĞ¡µÄÏß³Ì¸öÊı´´½¨¹¤×÷Ïß³Ì
         int count=0;
         for(int i=0;i<m_minNum;i++)
         {
             pthread_create(&threadIds[i],NULL,worker,this);
-            cout<<"åˆ›å»ºå­çº¿ç¨‹ï¼Œid="<<to_string(threadIds[i])<<endl;
+            cout<<"´´½¨×ÓÏß³Ì£¬id="<<to_string(threadIds[i].x)<<endl;
             
         }
 
-        //åˆ›å»ºç®¡ç†è€…è¿›ç¨‹
+        //´´½¨¹ÜÀíÕß½ø³Ì
         pthread_create(&ManagerId,NULL,manager,this);
     }while (0);
     
@@ -60,9 +60,9 @@ ThreadPool::ThreadPool(int min, int max)
 ThreadPool::~ThreadPool()
 {
     shutdown = 1;
-    // é”€æ¯ç®¡ç†è€…çº¿ç¨‹
+    // Ïú»Ù¹ÜÀíÕßÏß³Ì
     pthread_join(ManagerId, NULL);
-    // å”¤é†’æ‰€æœ‰æ¶ˆè´¹è€…çº¿ç¨‹
+    // »½ĞÑËùÓĞÏû·ÑÕßÏß³Ì
     for (int i = 0; i < live_Num; ++i)
     {
         pthread_cond_signal(&notEmpty);
@@ -85,9 +85,9 @@ void ThreadPool::addTask(Task a)
     {
         return;
     }
-    // æ·»åŠ ä»»åŠ¡ï¼Œä¸éœ€è¦åŠ é”ï¼Œä»»åŠ¡é˜Ÿåˆ—ä¸­æœ‰é”
+    // Ìí¼ÓÈÎÎñ£¬²»ĞèÒª¼ÓËø£¬ÈÎÎñ¶ÓÁĞÖĞÓĞËø
     task->inputTask(a);
-    // å”¤é†’å·¥ä½œçš„çº¿ç¨‹
+    // »½ĞÑ¹¤×÷µÄÏß³Ì
     pthread_cond_signal(&notEmpty);
 
 }
@@ -95,17 +95,17 @@ void ThreadPool::addTask(Task a)
 void *ThreadPool::worker(void *arg)
 {
     ThreadPool * pool=static_cast<ThreadPool *>(arg);
-    while (1)//ä¸æ–­ä»ä»»åŠ¡åˆ—è¡¨æ‹‰å–ä»»åŠ¡è¿è¡Œ
+    while (1)//²»¶Ï´ÓÈÎÎñÁĞ±íÀ­È¡ÈÎÎñÔËĞĞ
     {
-        //å…ˆåŠ é”
+        //ÏÈ¼ÓËø
         pthread_mutex_lock(&pool->mutexPool);
         while(pool->task->getTaskNum()==0&&!pool->shutdown)
         {
-            cout << "thread " << to_string(pthread_self()) << " waiting..." << endl;
-            //é˜»å¡çº¿ç¨‹
+            cout << "thread " << to_string(pthread_self().x) << " waiting..." << endl;
+            //×èÈûÏß³Ì
             pthread_cond_wait(&pool->notEmpty,&pool->mutexPool);
 
-            //è§£é™¤é˜»å¡ä¹‹ååˆ¤æ–­æ˜¯å¦è¦é”€æ¯çº¿ç¨‹
+            //½â³ı×èÈûÖ®ºóÅĞ¶ÏÊÇ·ñÒªÏú»ÙÏß³Ì
             if(pool->exit_Num>0)
             {
                 pool->exit_Num--;
@@ -119,26 +119,27 @@ void *ThreadPool::worker(void *arg)
             }
             
         }
-        //åˆ¤æ–­çº¿ç¨‹æ± æ˜¯ä¸æ˜¯è¢«å…³é—­äº†
+        //ÅĞ¶ÏÏß³Ì³ØÊÇ²»ÊÇ±»¹Ø±ÕÁË
         if(pool->shutdown)
         {
             pthread_mutex_unlock(&pool->mutexPool);
             pool->threadExit();
         }
 
-        //ä»ä»»åŠ¡é˜Ÿåˆ—ä¸­å–å‡ºä¸€ä¸ªä»»åŠ¡
+        //´ÓÈÎÎñ¶ÓÁĞÖĞÈ¡³öÒ»¸öÈÎÎñ
         Task task= pool->task->getTask();
         pool->busy_Num++;
         pthread_mutex_unlock(&pool->mutexPool);
 
-        cout << "thread " << to_string(pthread_self()) << " start working..." << endl;
+        cout << "thread " << to_string(pthread_self().x) << " start working..." << endl;
+
         task.function(task.arg);
-        delete task.arg;
+        //delete task.arg;
         task.arg=nullptr;
-        cout << "thread " << to_string(pthread_self()) << " end working..." << endl;
+        cout << "thread " << to_string(pthread_self().x) << " end working..." << endl;
 
 
-        //ä»»åŠ¡å¤„ç†ç»“æŸ
+        //ÈÎÎñ´¦Àí½áÊø
         pthread_mutex_lock(&pool->mutexPool);
         pool->busy_Num--;
         pthread_mutex_unlock(&pool->mutexPool);
@@ -153,31 +154,31 @@ void *ThreadPool::worker(void *arg)
 void *ThreadPool::manager(void *arg)
 {
     ThreadPool* pool = static_cast<ThreadPool*>(arg);
-    // å¦‚æœçº¿ç¨‹æ± æ²¡æœ‰å…³é—­, å°±ä¸€ç›´æ£€æµ‹
+    // Èç¹ûÏß³Ì³ØÃ»ÓĞ¹Ø±Õ, ¾ÍÒ»Ö±¼ì²â
     while (!pool->shutdown)
     {
-        // æ¯éš”5sæ£€æµ‹ä¸€æ¬¡
-        sleep(5);
-        // å–å‡ºçº¿ç¨‹æ± ä¸­çš„ä»»åŠ¡æ•°å’Œçº¿ç¨‹æ•°é‡
-        //  å–å‡ºå·¥ä½œçš„çº¿ç¨‹æ± æ•°é‡
+        // Ã¿¸ô5s¼ì²âÒ»´Î
+        Sleep(5000);
+        // È¡³öÏß³Ì³ØÖĞµÄÈÎÎñÊıºÍÏß³ÌÊıÁ¿
+        //  È¡³ö¹¤×÷µÄÏß³Ì³ØÊıÁ¿
         pthread_mutex_lock(&pool->mutexPool);
         int queueSize = pool->task->getTaskNum();
         int liveNum = pool->live_Num;
         int busyNum = pool->busy_Num;
         pthread_mutex_unlock(&pool->mutexPool);
 
-        // åˆ›å»ºçº¿ç¨‹
+        // ´´½¨Ïß³Ì
         const int NUMBER = 2;
-        // å½“å‰ä»»åŠ¡ä¸ªæ•°>å­˜æ´»çš„çº¿ç¨‹æ•° && å­˜æ´»çš„çº¿ç¨‹æ•°<æœ€å¤§çº¿ç¨‹ä¸ªæ•°
+        // µ±Ç°ÈÎÎñ¸öÊı>´æ»îµÄÏß³ÌÊı && ´æ»îµÄÏß³ÌÊı<×î´óÏß³Ì¸öÊı
         if (queueSize > liveNum && liveNum < pool->m_maxNum)
         {
-            // çº¿ç¨‹æ± åŠ é”
+            // Ïß³Ì³Ø¼ÓËø
             pthread_mutex_lock(&pool->mutexPool);
             int num = 0;
             for (int i = 0; i < pool->m_maxNum && num < NUMBER
                 && pool->live_Num < pool->m_maxNum; ++i)
             {
-                if (pool->threadIds[i] == 0)
+                if (pool->threadIds[i].x == 0)
                 {
                     pthread_create(&pool->threadIds[i], NULL, worker, pool);
                     num++;
@@ -187,8 +188,8 @@ void *ThreadPool::manager(void *arg)
             pthread_mutex_unlock(&pool->mutexPool);
         }
 
-        // é”€æ¯å¤šä½™çš„çº¿ç¨‹
-        // å¿™çº¿ç¨‹*2 < å­˜æ´»çš„çº¿ç¨‹æ•°ç›® && å­˜æ´»çš„çº¿ç¨‹æ•° > æœ€å°çº¿ç¨‹æ•°é‡
+        // Ïú»Ù¶àÓàµÄÏß³Ì
+        // Ã¦Ïß³Ì*2 < ´æ»îµÄÏß³ÌÊıÄ¿ && ´æ»îµÄÏß³ÌÊı > ×îĞ¡Ïß³ÌÊıÁ¿
         if (busyNum * 2 < liveNum && liveNum > pool->m_minNum)
         {
             pthread_mutex_lock(&pool->mutexPool);
@@ -210,11 +211,12 @@ void ThreadPool::threadExit()
     pthread_t tid = pthread_self();
     for (int i = 0; i < m_maxNum; ++i)
     {
-        if (threadIds[i] == tid)
+        if (threadIds[i].x == tid.x)
         {
             cout << "threadExit() function: thread " 
-                << to_string(pthread_self()) << " exiting..." << endl;
-            threadIds[i] = 0;
+                << to_string(pthread_self().x) << " exiting..." << endl;
+
+            threadIds[i].x = 0;
             break;
         }
     }

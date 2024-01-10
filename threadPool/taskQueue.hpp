@@ -28,7 +28,7 @@ struct Task
 class taskQ //任务队列
 {
 public:
-    //构造函数
+    //构造函�?
     taskQ();
 
     //析构函数

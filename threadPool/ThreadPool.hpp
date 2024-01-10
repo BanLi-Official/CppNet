@@ -1,38 +1,39 @@
 #include "taskQueue.hpp"
+#include "pthread.h"
 
 
 class ThreadPool
 {
 public:
-    //æ„é€ å‡½æ•°
+    //¹¹Ôìº¯Êı
     ThreadPool(int min,int max);
 
-    //ææ„å‡½æ•°
+    //Îö¹¹º¯Êı
     ~ThreadPool();
 
-    //æ·»åŠ ä»»åŠ¡
+    //Ìí¼ÓÈÎÎñ
     void addTask(Task a);
 
-    //è·å–å¿™çº¿ç¨‹çš„ä¸ªæ•°
+    //»ñÈ¡Ã¦Ïß³ÌµÄ¸öÊı
     inline int getBusyNumber()
     {
         return this->busy_Num;
     }
 
-    //è·å–æ´»ç€çš„çº¿ç¨‹ä¸ªæ•°
+    //»ñÈ¡»î×ÅµÄÏß³Ì¸öÊı
     inline int getLiveNumber()
     {
         return this->live_Num;
     }
 
 private:
-    //å·¥ä½œä»»åŠ¡å‡½æ•°
+    //¹¤×÷ÈÎÎñº¯Êı
     static void* worker(void *arg);
 
-    //ç®¡ç†è€…çº¿ç¨‹å‡½æ•°
+    //¹ÜÀíÕßÏß³Ìº¯Êı
     static void* manager(void *arg);
 
-    //çº¿ç¨‹é€€å‡ºå‡½æ•°
+    //Ïß³ÌÍË³öº¯Êı
     void threadExit();
 
 private:

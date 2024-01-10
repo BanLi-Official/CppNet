@@ -33,8 +33,8 @@ void taskQ::inputTask(callback f, void *arg)
 Task taskQ::getTask()
 {
     pthread_mutex_lock(&m_mutex);
-    Task res=this->taskQueue.front();//å–æœ€å‰é¢ç¬¬ä¸€ä¸ªä»»åŠ¡
-    this->taskQueue.pop();//å¼¹å‡ºç¬¬ä¸€ä¸ªä»»åŠ¡
+    Task res=this->taskQueue.front();//È¡×îÇ°ÃæµÚÒ»¸öÈÎÎñ
+    this->taskQueue.pop();//µ¯³öµÚÒ»¸öÈÎÎñ
     pthread_mutex_unlock(&m_mutex);
     return res;
 }

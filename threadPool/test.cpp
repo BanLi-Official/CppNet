@@ -6,11 +6,12 @@
 
 
 
+
 void counter(void *arg)
 {
     int num=*(int*)arg;
-    printf("thread %ld count:::counter=%d\n",pthread_self(),num);
-    sleep(2);
+    printf("thread %ld count:::counter=%d\n",pthread_self().x,num);
+    Sleep(1000);
 }
 
 int main()
@@ -24,7 +25,7 @@ int main()
         pool.addTask(Task(counter,num));
     }
 
-    sleep(30);
+    Sleep(30000);
 
     return 1;
 }
