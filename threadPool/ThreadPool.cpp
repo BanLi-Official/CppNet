@@ -6,7 +6,9 @@
 #include <pthread.h>
 
 
+
 using namespace std;
+extern pthread_mutex_t IOMutex;
 
 ThreadPool::ThreadPool(int min, int max)
 {
@@ -101,7 +103,11 @@ void *ThreadPool::worker(void *arg)
         pthread_mutex_lock(&pool->mutexPool);
         while(pool->task->getTaskNum()==0&&!pool->shutdown)
         {
-            cout << "thread " << to_string(pthread_self().x) << " waiting..." << endl;
+
+            //cout << "thread " << to_string(pthread_self().x) << " waiting..." << endl;
+            pthread_mutex_lock(&IOMutex);
+            cout << "thread " << to_string(pthread_getw32threadid_np(pthread_self())) << " waiting..." << endl;
+            pthread_mutex_unlock(&IOMutex);
             //阻塞线程
             pthread_cond_wait(&pool->notEmpty,&pool->mutexPool);
 
@@ -129,14 +135,19 @@ void *ThreadPool::worker(void *arg)
         //从任务队列中取出一个任务
         Task task= pool->task->getTask();
         pool->busy_Num++;
-        pthread_mutex_unlock(&pool->mutexPool);
 
-        cout << "thread " << to_string(pthread_self().x) << " start working..." << endl;
+        pthread_mutex_unlock(&pool->mutexPool);
+        pthread_mutex_lock(&IOMutex);
+        cout << "thread " << to_string(pthread_getw32threadid_np(pthread_self())) << " start working..." << endl;
+        pthread_mutex_unlock(&IOMutex);
 
         task.function(task.arg);
         //delete task.arg;
         task.arg=nullptr;
-        cout << "thread " << to_string(pthread_self().x) << " end working..." << endl;
+
+        pthread_mutex_lock(&IOMutex);
+        cout << "thread " << to_string(pthread_getw32threadid_np(pthread_self())) << " end working..." << endl;
+         pthread_mutex_unlock(&IOMutex);
 
 
         //任务处理结束
@@ -179,6 +190,7 @@ void *ThreadPool::manager(void *arg)
                 && pool->live_Num < pool->m_maxNum; ++i)
             {
                 if (pool->threadIds[i].x == 0)
+                //if ( pthread_getw32threadid_np(pool->threadIds[i])== 0)
                 {
                     pthread_create(&pool->threadIds[i], NULL, worker, pool);
                     num++;
@@ -211,12 +223,13 @@ void ThreadPool::threadExit()
     pthread_t tid = pthread_self();
     for (int i = 0; i < m_maxNum; ++i)
     {
-        if (threadIds[i].x == tid.x)
+        if (pthread_getw32threadid_np(threadIds[i]) == pthread_getw32threadid_np(tid))
         {
+            pthread_mutex_lock(&IOMutex);
             cout << "threadExit() function: thread " 
-                << to_string(pthread_self().x) << " exiting..." << endl;
-
-            threadIds[i].x = 0;
+                << to_string(pthread_getw32threadid_np(pthread_self())) << " exiting..." << endl;
+            pthread_mutex_unlock(&IOMutex);
+            threadIds[i].x= 0;
             break;
         }
     }
