@@ -14,44 +14,44 @@ ThreadPool::ThreadPool(int min, int max)
 {
 
 
-    //ÊµÀý»¯ÈÎÎñ¶ÓÁÐ
+    //Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     task=new taskQ;
     do
     {
-        //³õÊ¼»¯Ïß³Ì³Ø
+        //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ß³Ì³ï¿½
         this->m_minNum=min;
         this->m_maxNum=max;
         busy_Num=0;
         live_Num=min;
 
-        //¸ù¾Ý×î´óµÄÏß³ÌÉÏÏÞ¸øÏß³ÌÊý×é·ÖÅäÄÚ´æ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
         threadIds=new pthread_t[m_maxNum];
         if(threadIds==nullptr)
         {
-            cout<<"Ïß³Ì³õÊ¼»¯Ê§°Ü"<<endl;
+            cout<<"ï¿½ß³Ì³ï¿½Ê¼ï¿½ï¿½Ê§ï¿½ï¿½"<<endl;
             break;
         }
-        //³õÊ¼»¯
+        //ï¿½ï¿½Ê¼ï¿½ï¿½
         memset(threadIds,0,sizeof(pthread_t)*m_maxNum);
-        //³õÊ¼»¯»¥³âËø£¬Ìõ¼þ±äÁ¿¡£ÓÃÓÚ»¥³âÓëÍ¬²½
+        //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½
         if(pthread_mutex_init(&this->mutexPool,NULL)!=0||
             pthread_cond_init(&this->notEmpty,NULL)!=0)
         {
-            cout<<"»¥³âËøºÍÌõ¼þ±äÁ¿³õÊ¼»¯Ê§°Ü"<<endl;
+            cout<<"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ê§ï¿½ï¿½"<<endl;
             break;
         }
 
-        //´´½¨Ïß³Ì
-        //¸ù¾Ý×îÐ¡µÄÏß³Ì¸öÊý´´½¨¹¤×÷Ïß³Ì
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ß³Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
         int count=0;
         for(int i=0;i<m_minNum;i++)
         {
             pthread_create(&threadIds[i],NULL,worker,this);
-            cout<<"´´½¨×ÓÏß³Ì£¬id="<<to_string(threadIds[i].x)<<endl;
+            cout<<"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì£ï¿½id="<<to_string(threadIds[i].x)<<endl;
             
         }
 
-        //´´½¨¹ÜÀíÕß½ø³Ì
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½
         pthread_create(&ManagerId,NULL,manager,this);
     }while (0);
     
@@ -62,9 +62,9 @@ ThreadPool::ThreadPool(int min, int max)
 ThreadPool::~ThreadPool()
 {
     shutdown = 1;
-    // Ïú»Ù¹ÜÀíÕßÏß³Ì
+    // ï¿½ï¿½ï¿½Ù¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
     pthread_join(ManagerId, NULL);
-    // »½ÐÑËùÓÐÏû·ÑÕßÏß³Ì
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
     for (int i = 0; i < live_Num; ++i)
     {
         pthread_cond_signal(&notEmpty);
@@ -87,9 +87,9 @@ void ThreadPool::addTask(Task a)
     {
         return;
     }
-    // Ìí¼ÓÈÎÎñ£¬²»ÐèÒª¼ÓËø£¬ÈÎÎñ¶ÓÁÐÖÐÓÐËø
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ£¬²ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     task->inputTask(a);
-    // »½ÐÑ¹¤×÷µÄÏß³Ì
+    // ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
     pthread_cond_signal(&notEmpty);
 
 }
@@ -97,22 +97,22 @@ void ThreadPool::addTask(Task a)
 void *ThreadPool::worker(void *arg)
 {
     ThreadPool * pool=static_cast<ThreadPool *>(arg);
-    while (1)//²»¶Ï´ÓÈÎÎñÁÐ±íÀ­È¡ÈÎÎñÔËÐÐ
+    while (1)//ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
-        //ÏÈ¼ÓËø
+        //ï¿½È¼ï¿½ï¿½ï¿½
         pthread_mutex_lock(&pool->mutexPool);
-        while(pool->task->getTaskNum()==0&&!pool->shutdown)
+        while(pool->task->getTaskNum()==0&&rn)
         {
 
             //cout << "thread " << to_string(pthread_self().x) << " waiting..." << endl;
             pthread_mutex_lock(&IOMutex);
             cout << "thread " << to_string(pthread_getw32threadid_np(pthread_self())) << " waiting..." << endl;
             pthread_mutex_unlock(&IOMutex);
-            //×èÈûÏß³Ì
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
             pthread_cond_wait(&pool->notEmpty,&pool->mutexPool);
 
-            //½â³ý×èÈûÖ®ºóÅÐ¶ÏÊÇ·ñÒªÏú»ÙÏß³Ì
-            if(pool->exit_Num>0)
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
+            if(pool->exit_Nu m>0)
             {
                 pool->exit_Num--;
                 if (pool->live_Num>pool->m_minNum)
@@ -125,14 +125,14 @@ void *ThreadPool::worker(void *arg)
             }
             
         }
-        //ÅÐ¶ÏÏß³Ì³ØÊÇ²»ÊÇ±»¹Ø±ÕÁË
+        //ï¿½Ð¶ï¿½ï¿½ß³Ì³ï¿½ï¿½Ç²ï¿½ï¿½Ç±ï¿½ï¿½Ø±ï¿½ï¿½ï¿½
         if(pool->shutdown)
         {
             pthread_mutex_unlock(&pool->mutexPool);
             pool->threadExit();
         }
 
-        //´ÓÈÎÎñ¶ÓÁÐÖÐÈ¡³öÒ»¸öÈÎÎñ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Task task= pool->task->getTask();
         pool->busy_Num++;
 
@@ -150,7 +150,7 @@ void *ThreadPool::worker(void *arg)
          pthread_mutex_unlock(&IOMutex);
 
 
-        //ÈÎÎñ´¦Àí½áÊø
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         pthread_mutex_lock(&pool->mutexPool);
         pool->busy_Num--;
         pthread_mutex_unlock(&pool->mutexPool);
@@ -165,25 +165,25 @@ void *ThreadPool::worker(void *arg)
 void *ThreadPool::manager(void *arg)
 {
     ThreadPool* pool = static_cast<ThreadPool*>(arg);
-    // Èç¹ûÏß³Ì³ØÃ»ÓÐ¹Ø±Õ, ¾ÍÒ»Ö±¼ì²â
+    // ï¿½ï¿½ï¿½ï¿½ß³Ì³ï¿½Ã»ï¿½Ð¹Ø±ï¿½, ï¿½ï¿½Ò»Ö±ï¿½ï¿½ï¿½
     while (!pool->shutdown)
     {
-        // Ã¿¸ô5s¼ì²âÒ»´Î
+        // Ã¿ï¿½ï¿½5sï¿½ï¿½ï¿½Ò»ï¿½ï¿½
         Sleep(5000);
-        // È¡³öÏß³Ì³ØÖÐµÄÈÎÎñÊýºÍÏß³ÌÊýÁ¿
-        //  È¡³ö¹¤×÷µÄÏß³Ì³ØÊýÁ¿
+        // È¡ï¿½ï¿½ï¿½ß³Ì³ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
+        //  È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì³ï¿½ï¿½ï¿½ï¿½ï¿½
         pthread_mutex_lock(&pool->mutexPool);
         int queueSize = pool->task->getTaskNum();
         int liveNum = pool->live_Num;
         int busyNum = pool->busy_Num;
         pthread_mutex_unlock(&pool->mutexPool);
 
-        // ´´½¨Ïß³Ì
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
         const int NUMBER = 2;
-        // µ±Ç°ÈÎÎñ¸öÊý>´æ»îµÄÏß³ÌÊý && ´æ»îµÄÏß³ÌÊý<×î´óÏß³Ì¸öÊý
+        // ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½>ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ && ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½<ï¿½ï¿½ï¿½ï¿½ß³Ì¸ï¿½ï¿½ï¿½
         if (queueSize > liveNum && liveNum < pool->m_maxNum)
         {
-            // Ïß³Ì³Ø¼ÓËø
+            // ï¿½ß³Ì³Ø¼ï¿½ï¿½ï¿½
             pthread_mutex_lock(&pool->mutexPool);
             int num = 0;
             for (int i = 0; i < pool->m_maxNum && num < NUMBER
@@ -200,8 +200,8 @@ void *ThreadPool::manager(void *arg)
             pthread_mutex_unlock(&pool->mutexPool);
         }
 
-        // Ïú»Ù¶àÓàµÄÏß³Ì
-        // Ã¦Ïß³Ì*2 < ´æ»îµÄÏß³ÌÊýÄ¿ && ´æ»îµÄÏß³ÌÊý > ×îÐ¡Ïß³ÌÊýÁ¿
+        // ï¿½ï¿½ï¿½Ù¶ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
+        // Ã¦ï¿½ß³ï¿½*2 < ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½Ä¿ && ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ > ï¿½ï¿½Ð¡ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
         if (busyNum * 2 < liveNum && liveNum > pool->m_minNum)
         {
             pthread_mutex_lock(&pool->mutexPool);

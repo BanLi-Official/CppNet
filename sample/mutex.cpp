@@ -3,7 +3,7 @@
 
 using namespace std;
 
-MyMutex mutexs=new MyMutex(); 
+
 
 MyMutex::MyMutex()
 {

@@ -28,7 +28,7 @@ ThreadPool::ThreadPool(int min, int max)
         threadIds=new pthread_t[m_maxNum];
         if(threadIds==nullptr)
         {
-            cout<<"??????????"<<endl;
+            //cout<<"??????????"<<endl;
             break;
         }
         //?????
@@ -37,19 +37,19 @@ ThreadPool::ThreadPool(int min, int max)
         if(pthread_mutex_init(&this->mutexPool,NULL)!=0||
             pthread_cond_init(&this->notEmpty,NULL)!=0)
         {
-            cout<<"????????????????????????"<<endl;
+            //cout<<"????????????????????????"<<endl;
             break;
         }
 
         //???????
-        //??????Ð¡???????????????????
+        //??????§³???????????????????
         int count=0;
         for(int i=0;i<m_minNum;i++)
         {
             pthread_create(&threadIds[i],NULL,worker,this);
-            pthread_mutex_lock(&IOMutex);
-            cout<<"??????????id="<<to_string(threadIds[i])<<endl;
-            pthread_mutex_unlock(&IOMutex);
+            //pthread_mutex_lock(&IOMutex);
+            //cout<<"??????????id="<<to_string(threadIds[i])<<endl;
+            //pthread_mutex_unlock(&IOMutex);
             
         }
 
@@ -99,7 +99,7 @@ void ThreadPool::addTask(Task a)
 void *ThreadPool::worker(void *arg)
 {
     ThreadPool * pool=static_cast<ThreadPool *>(arg);
-    while (1)//??????????Ð±????????????
+    while (1)//??????????§Ò????????????
     {
         //?????
         pthread_mutex_lock(&pool->mutexPool);
@@ -107,13 +107,13 @@ void *ThreadPool::worker(void *arg)
         {
 
            
-            pthread_mutex_lock(&IOMutex);
-            cout << "thread " << to_string(pthread_self()) << " waiting..." << endl;
-            pthread_mutex_unlock(&IOMutex);
+            //pthread_mutex_lock(&IOMutex);
+            //cout << "thread " << to_string(pthread_self()) << " waiting..." << endl;
+            ///pthread_mutex_unlock(&IOMutex);
             //???????
             pthread_cond_wait(&pool->notEmpty,&pool->mutexPool);
 
-            //???????????Ð¶????????????
+            //???????????§Ø????????????
             if(pool->exit_Num>0)
             {
                 pool->exit_Num--;
@@ -127,7 +127,7 @@ void *ThreadPool::worker(void *arg)
             }
             
         }
-        //?Ð¶????????????????
+        //?§Ø????????????????
         if(pool->shutdown)
         {
             pthread_mutex_unlock(&pool->mutexPool);
@@ -139,17 +139,17 @@ void *ThreadPool::worker(void *arg)
         pool->busy_Num++;
 
         pthread_mutex_unlock(&pool->mutexPool);
-        pthread_mutex_lock(&IOMutex);
-        cout << "thread " << to_string(pthread_self()) << " start working..." << endl;
-        pthread_mutex_unlock(&IOMutex);
+        //pthread_mutex_lock(&IOMutex);
+        //cout << "thread " << to_string(pthread_self()) << " start working..." << endl;
+        //pthread_mutex_unlock(&IOMutex);
 
         task.function(task.arg);
         //delete task.arg;
         task.arg=nullptr;
 
-        pthread_mutex_lock(&IOMutex);
-        cout << "thread " << to_string(pthread_self()) << " end working..." << endl;
-         pthread_mutex_unlock(&IOMutex);
+        //pthread_mutex_lock(&IOMutex);
+        //cout << "thread " << to_string(pthread_self()) << " end working..." << endl;
+        //pthread_mutex_unlock(&IOMutex);
 
 
         //??????????
@@ -167,12 +167,12 @@ void *ThreadPool::worker(void *arg)
 void *ThreadPool::manager(void *arg)
 {
     ThreadPool* pool = static_cast<ThreadPool*>(arg);
-    // ?????????Ð¹??, ???????
+    // ?????????§Û??, ???????
     while (!pool->shutdown)
     {
         // ???5s??????
         sleep(5);
-        // ????????Ðµ????????????????
+        // ????????§Ö????????????????
         //  ?????????????????
         pthread_mutex_lock(&pool->mutexPool);
         int queueSize = pool->task->getTaskNum();
@@ -183,7 +183,7 @@ void *ThreadPool::manager(void *arg)
         // ???????
         const int NUMBER = 2;
         // ??????????>????????? && ?????????<?????????
-        if (queueSize > liveNum && liveNum < pool->m_maxNum)
+        if (queueSize > liveNum-busyNum && liveNum < pool->m_maxNum)
         {
             // ???????
             pthread_mutex_lock(&pool->mutexPool);
@@ -194,9 +194,9 @@ void *ThreadPool::manager(void *arg)
                 if (pool->threadIds[i] == 0)
                 {
                     pthread_create(&pool->threadIds[i], NULL, worker, pool);
-                    pthread_mutex_lock(&IOMutex);
-                    cout<<"??????????id="<<to_string(pool->threadIds[i])<<endl;
-                    pthread_mutex_unlock(&IOMutex);
+                    //pthread_mutex_lock(&IOMutex);
+                    //cout<<"??????????id="<<to_string(pool->threadIds[i])<<endl;
+                    //pthread_mutex_unlock(&IOMutex);
                     num++;
                     pool->live_Num++;
                 }
@@ -205,7 +205,7 @@ void *ThreadPool::manager(void *arg)
         }
 
         // ???????????
-        // ????*2 < ?????????? && ????????? > ??Ð¡???????
+        // ????*2 < ?????????? && ????????? > ??§³???????
         if (busyNum * 2 < liveNum && liveNum > pool->m_minNum)
         {
             pthread_mutex_lock(&pool->mutexPool);
@@ -229,10 +229,10 @@ void ThreadPool::threadExit()
     {
         if (threadIds[i] == tid)
         {
-            pthread_mutex_lock(&IOMutex);
-            cout << "threadExit() function: thread " 
-                << to_string(pthread_self()) << " exiting..." << endl;
-            pthread_mutex_unlock(&IOMutex);
+            //pthread_mutex_lock(&IOMutex);
+            //cout << "threadExit() function: thread " 
+                //<< to_string(pthread_self()) << " exiting..." << endl;
+            //pthread_mutex_unlock(&IOMutex);
             threadIds[i]= 0;
             break;
         }

@@ -36,17 +36,17 @@ int main()
         pool.addTask(Task(counter,num));
     }
 
-    while (global_num!=50)//判断所有任务都已完成
+    while (global_num!=50)//等待所有任务都结束
     {
         continue;
     }
 
-    delete &pool; //销毁线程池实例
+    delete &pool; //销毁线程池
     pthread_mutex_lock(&IOMutex);
     std::cout<<"The thread pool instance is being destroyed.............................................."<<endl;
     pthread_mutex_unlock(&IOMutex);
     
-    sleep(10);//等待几秒钟给线程池时间销毁
+    sleep(10);//等待线程池销毁完毕
 
     return 1;
 }

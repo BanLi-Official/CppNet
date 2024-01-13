@@ -8,6 +8,8 @@
 
 using namespace std;
 
+
+
 //编译
 //F:\study_app\MinGW\x86_64-8.1.0-release-win32-seh-rt_v6-rev0\mingw64\bin\g++.exe -fdiagnostics-color=always -g F:\WORKS\c++\c++网络编程\sample\TcpClient.cpp -o F:\WORKS\c++\c++网络编程\sample\TcpClient.exe -lws2_32
 //g++ -fdiagnostics-color=always -g TcpClient.cpp -o TcpClient.exe -lws2_32
@@ -68,7 +70,7 @@ int main()
         }
         else
         {
-            perror("read");
+            perror("read err");
             break;
         }
         sleep(1);   // 每隔1s发送一条数据

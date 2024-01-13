@@ -12,7 +12,7 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
-//ç¼–è¯‘ï¼šF:\study_app\MinGW\x86_64-8.1.0-release-win32-seh-rt_v6-rev0\mingw64\bin\g++.exe -fdiagnostics-color=always -g F:\WORKS\c++\c++ç½‘ç»œç¼–ç¨‹\sample\TcpServer.cpp -o F:\WORKS\c++\c++ç½‘ç»œç¼–ç¨‹\sample\TcpServer.exe -lws2_32
+//±àÒë£ºF:\study_app\MinGW\x86_64-8.1.0-release-win32-seh-rt_v6-rev0\mingw64\bin\g++.exe -fdiagnostics-color=always -g F:\WORKS\c++\c++ÍøÂç±à³Ì\sample\TcpServer.cpp -o F:\WORKS\c++\c++ÍøÂç±à³Ì\sample\TcpServer.exe -lws2_32
 //g++ -fdiagnostics-color=always -g TcpServer.cpp -o TcpServer.exe -lws2_32
 
 using namespace std;
@@ -21,22 +21,22 @@ int main()
 {
     WSAData wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
-    // 1. åˆ›å»ºç›‘å¬çš„å¥—æ¥å­—
-    int lfd = socket(AF_INET, SOCK_STREAM, 0);
+    // 1. ´´½¨¼àÌıµÄÌ×½Ó×Ö
+    int lfd = socket(AF_INET, SOCK_STREAM, 0);//AF_INET->ipv4    SOCK_STREAM->Á÷Ê½´«ÊäĞ­Òé
     if(lfd == -1)
     {
         perror("socket");
         exit(0);
     }
 
-    // 2. å°†socket()è¿”å›å€¼å’Œæœ¬åœ°çš„IPç«¯å£ç»‘å®šåˆ°ä¸€èµ·
+    // 2. ½«socket()·µ»ØÖµºÍ±¾µØµÄIP¶Ë¿Ú°ó¶¨µ½Ò»Æğ
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(10000);   // å¤§ç«¯ç«¯å£
-    // INADDR_ANYä»£è¡¨æœ¬æœºçš„æ‰€æœ‰IP, å‡è®¾æœ‰ä¸‰ä¸ªç½‘å¡å°±æœ‰ä¸‰ä¸ªIPåœ°å€
-    // è¿™ä¸ªå®å¯ä»¥ä»£è¡¨ä»»æ„ä¸€ä¸ªIPåœ°å€
-    // è¿™ä¸ªå®ä¸€èˆ¬ç”¨äºæœ¬åœ°çš„ç»‘å®šæ“ä½œ
-    addr.sin_addr.s_addr = INADDR_ANY;  // è¿™ä¸ªå®çš„å€¼ä¸º0 == 0.0.0.0
+    addr.sin_port = htons(10000);   // ´ó¶Ë¶Ë¿Ú
+    // INADDR_ANY´ú±í±¾»úµÄËùÓĞIP, ¼ÙÉèÓĞÈı¸öÍø¿¨¾ÍÓĞÈı¸öIPµØÖ·
+    // Õâ¸öºê¿ÉÒÔ´ú±íÈÎÒâÒ»¸öIPµØÖ·
+    // Õâ¸öºêÒ»°ãÓÃÓÚ±¾µØµÄ°ó¶¨²Ù×÷
+    addr.sin_addr.s_addr = INADDR_ANY;  // Õâ¸öºêµÄÖµÎª0 == 0.0.0.0
 //    inet_pton(AF_INET, "192.168.237.131", &addr.sin_addr.s_addr);
     int ret = bind(lfd, (struct sockaddr*)&addr, sizeof(addr));
     if(ret == -1)
@@ -45,7 +45,7 @@ int main()
         exit(0);
     }
 
-    // 3. è®¾ç½®ç›‘å¬
+    // 3. ÉèÖÃ¼àÌı
     ret = listen(lfd, 128);
     if(ret == -1)
     {
@@ -53,10 +53,10 @@ int main()
         exit(0);
     }
 
-    // 4. é˜»å¡ç­‰å¾…å¹¶æ¥å—å®¢æˆ·ç«¯è¿æ¥
+    // 4. ×èÈûµÈ´ı²¢½ÓÊÜ¿Í»§¶ËÁ¬½Ó
     struct sockaddr_in cliaddr;
     int clilen = sizeof(cliaddr);
-    int cfd = accept(lfd, (struct sockaddr*)&cliaddr, &clilen);  //æˆåŠŸæ—¶ï¼Œacceptå‡½æ•°è¿”å›ä¸€ä¸ªæ–°çš„æ–‡ä»¶æè¿°ç¬¦cfdï¼Œç”¨äºå”¯ä¸€æ ‡è¯†ä¸å®¢æˆ·ç«¯çš„é€šä¿¡å¥—æ¥å­—ï¼›å¤±è´¥æ—¶è¿”å›-1ã€‚
+    int cfd = accept(lfd, (struct sockaddr*)&cliaddr, &clilen);  //³É¹¦Ê±£¬acceptº¯Êı·µ»ØÒ»¸öĞÂµÄÎÄ¼şÃèÊö·ûcfd£¬ÓÃÓÚÎ¨Ò»±êÊ¶Óë¿Í»§¶ËµÄÍ¨ĞÅÌ×½Ó×Ö£»Ê§°ÜÊ±·µ»Ø-1¡£
     if(cfd == -1)
     {
         perror("accept");
@@ -66,39 +66,39 @@ int main()
     {
         cout<<"connect sucess\n";
     }
-    // æ‰“å°å®¢æˆ·ç«¯çš„åœ°å€ä¿¡æ¯
+    // ´òÓ¡¿Í»§¶ËµÄµØÖ·ĞÅÏ¢
     char ip[24] = {0};
 
-    //printf("å®¢æˆ·ç«¯çš„IPåœ°å€: %s, ç«¯å£: %d\n",inet_ntop(AF_INET, &cliaddr.sin_addr.s_addr, ip, sizeof(ip)),ntohs(cliaddr.sin_port));
-    //printf("å®¢æˆ·ç«¯çš„IPåœ°å€: %s, ç«¯å£: %d\n",WSAAddressToStringA((LPSOCKADDR)&cliaddr.sin_addr.s_addr,sizeof(cliaddr.sin_addr.s_addr), NULL, (LPSTR)ip, &(DWORD )sizeof(ip)),ntohs(cliaddr.sin_port));
-    //printf("å®¢æˆ·ç«¯çš„IPåœ°å€: %s, ç«¯å£: %d\n",ntohl(cliaddr.sin_addr.S_un.S_addr),ntohs(cliaddr.sin_port));
-    //printf("å®¢æˆ·ç«¯çš„IPåœ°å€: %s, ç«¯å£: %d\n",cliaddr.sin_addr.s_addr,ntohs(cliaddr.sin_port));
-    // æ‰“å°å®¢æˆ·ç«¯çš„åœ°å€ä¿¡æ¯
+    //printf("¿Í»§¶ËµÄIPµØÖ·: %s, ¶Ë¿Ú: %d\n",inet_ntop(AF_INET, &cliaddr.sin_addr.s_addr, ip, sizeof(ip)),ntohs(cliaddr.sin_port));
+    //printf("¿Í»§¶ËµÄIPµØÖ·: %s, ¶Ë¿Ú: %d\n",WSAAddressToStringA((LPSOCKADDR)&cliaddr.sin_addr.s_addr,sizeof(cliaddr.sin_addr.s_addr), NULL, (LPSTR)ip, &(DWORD )sizeof(ip)),ntohs(cliaddr.sin_port));
+    //printf("¿Í»§¶ËµÄIPµØÖ·: %s, ¶Ë¿Ú: %d\n",ntohl(cliaddr.sin_addr.S_un.S_addr),ntohs(cliaddr.sin_port));
+    //printf("¿Í»§¶ËµÄIPµØÖ·: %s, ¶Ë¿Ú: %d\n",cliaddr.sin_addr.s_addr,ntohs(cliaddr.sin_port));
+    // ´òÓ¡¿Í»§¶ËµÄµØÖ·ĞÅÏ¢
 
 
     strcpy(ip, inet_ntoa(cliaddr.sin_addr));
-    printf("å®¢æˆ·ç«¯çš„IPåœ°å€ï¼š%s, ç«¯å£ï¼š%d\n", ip, ntohs(cliaddr.sin_port));
+    printf("¿Í»§¶ËµÄIPµØÖ·£º%s, ¶Ë¿Ú£º%d\n", ip, ntohs(cliaddr.sin_port));
 
 
-    // 5. å’Œå®¢æˆ·ç«¯é€šä¿¡
+    // 5. ºÍ¿Í»§¶ËÍ¨ĞÅ
     int number=0;
     while(1)
     {
         cout<<"number="<<number++<<"\n";
-        // æ¥æ”¶æ•°æ®
+        // ½ÓÊÕÊı¾İ
         char buf[1024];
         memset(buf, 0, sizeof(buf));
-        cout<<"memset over\n";
+        //cout<<"memset over\n";
         int len = recv(cfd, buf, sizeof(buf),0);
-        cout<<"recv over\n";
+        //cout<<"recv over\n";
         if(len > 0)
         {
-            printf("å®¢æˆ·ç«¯say: %s\n", buf);
+            printf("¿Í»§¶Ësay: %s\n", buf);
             send(cfd, buf, len,0);
         }
         else if(len  == 0)
         {
-            printf("å®¢æˆ·ç«¯æ–­å¼€äº†è¿æ¥...\n");
+            printf("¿Í»§¶Ë¶Ï¿ªÁËÁ¬½Ó...\n");
             break;
         }
         else
