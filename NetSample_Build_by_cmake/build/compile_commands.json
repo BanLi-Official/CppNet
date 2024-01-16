@@ -1,0 +1,17 @@
+[
+{
+  "directory": "F:/WORKS/c++/c++Code/NetSample_Build_by_cmake/build",
+  "command": "g++  @CMakeFiles/TCPServer.dir/includes_CXX.rsp -g -std=gnu++11 -o CMakeFiles\\TCPServer.dir\\ThreadPool_cpp\\ThreadPool.cpp.obj -c F:\\WORKS\\c++\\c++Code\\NetSample_Build_by_cmake\\ThreadPool_cpp\\ThreadPool.cpp",
+  "file": "F:/WORKS/c++/c++Code/NetSample_Build_by_cmake/ThreadPool_cpp/ThreadPool.cpp"
+},
+{
+  "directory": "F:/WORKS/c++/c++Code/NetSample_Build_by_cmake/build",
+  "command": "g++  @CMakeFiles/TCPServer.dir/includes_CXX.rsp -g -std=gnu++11 -o CMakeFiles\\TCPServer.dir\\ThreadPool_cpp\\taskQueue.cpp.obj -c F:\\WORKS\\c++\\c++Code\\NetSample_Build_by_cmake\\ThreadPool_cpp\\taskQueue.cpp",
+  "file": "F:/WORKS/c++/c++Code/NetSample_Build_by_cmake/ThreadPool_cpp/taskQueue.cpp"
+},
+{
+  "directory": "F:/WORKS/c++/c++Code/NetSample_Build_by_cmake/build",
+  "command": "g++  @CMakeFiles/TCPServer.dir/includes_CXX.rsp -g -std=gnu++11 -o CMakeFiles\\TCPServer.dir\\Server\\TcpServerThreadPool.cpp.obj -c F:\\WORKS\\c++\\c++Code\\NetSample_Build_by_cmake\\Server\\TcpServerThreadPool.cpp",
+  "file": "F:/WORKS/c++/c++Code/NetSample_Build_by_cmake/Server/TcpServerThreadPool.cpp"
+}
+]
