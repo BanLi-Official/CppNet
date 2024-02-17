@@ -1,0 +1,8 @@
+/mnt/hgfs/VMshared/code/c++/NetSample_zhanbao/build/CMakeFiles/edit_cache.dir
+/mnt/hgfs/VMshared/code/c++/NetSample_zhanbao/build/CMakeFiles/rebuild_cache.dir
+/mnt/hgfs/VMshared/code/c++/NetSample_zhanbao/build/client/CMakeFiles/client.dir
+/mnt/hgfs/VMshared/code/c++/NetSample_zhanbao/build/client/CMakeFiles/edit_cache.dir
+/mnt/hgfs/VMshared/code/c++/NetSample_zhanbao/build/client/CMakeFiles/rebuild_cache.dir
+/mnt/hgfs/VMshared/code/c++/NetSample_zhanbao/build/server/CMakeFiles/server.dir
+/mnt/hgfs/VMshared/code/c++/NetSample_zhanbao/build/server/CMakeFiles/edit_cache.dir
+/mnt/hgfs/VMshared/code/c++/NetSample_zhanbao/build/server/CMakeFiles/rebuild_cache.dir
